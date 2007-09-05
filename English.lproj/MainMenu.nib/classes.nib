@@ -1,0 +1,22 @@
+{
+    IBClasses = (
+        {CLASS = BuildGrowler; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {quit = id; start = id; stop = id; }; 
+            CLASS = BuildGrowlerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                buildGrowler = BuildGrowler; 
+                hostText = NSFormCell; 
+                portText = NSFormCell; 
+                quitButton = NSButton; 
+                startButton = NSButton; 
+                statusText = NSTextField; 
+                stopButton = NSButton; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
