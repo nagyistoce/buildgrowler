@@ -25,11 +25,22 @@ from distutils.core import setup
 from setuptools import setup
 
 setup(
-	app=['src/BuildGrowler.py'],
-  setup_requires=["py2app"],
-	data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
-	options=dict(py2app=dict(
-		iconfile="icon/BuildGrowler.icns",
-		plist=dict(CFBundleName='BuildGrowler'),
-		))
+    app=['src/BuildGrowler.py'],
+    setup_requires=["py2app"],
+    data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
+    options=dict(py2app=dict(
+        iconfile="icon/BuildGrowler.icns",
+        # For a short list of these with descriptions, see the 
+        # 'Essential Application Identification Properties' section in the
+        # 'Cocoa Application Tutorial' in the 'ADC Reference Library'
+        plist=dict(
+            CFBundleName='BuildGrowler',
+            NSHumanReadableCopyright='Copyright 2007 Christian L. Jacobsen',
+            #CFBundleVersion='0.1', # build version
+            CFBundleShortVersionString='0.1' # release-version-number
+        ),
+
+    ))
 )
+
+# vim:ts=4:sw=4:et:
