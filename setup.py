@@ -21,12 +21,22 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from distutils.core import setup
-#import py2app
-from setuptools import setup
+import sys
+
+# I'mm having some issues with py2app 0.3.6 and python2.3 (I think thats the
+# issue anyway). So if we are building with < 2.4 (ie the Apple supplied Python)
+# use an older style of specifying the setup, by importing py2app and not
+# setuptools.
+if sys.hexversion < 0x02040000:
+    import py2app
+    setup_requires=None
+else:
+    from setuptools import setup
+    setup_requires=["py2app"],
 
 setup(
     app=['src/BuildGrowler.py'],
-    setup_requires=["py2app"],
+    setup_requires=setup_requires,
     data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
     options=dict(py2app=dict(
         iconfile="icon/BuildGrowler.icns",
