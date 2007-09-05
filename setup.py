@@ -29,7 +29,7 @@ setup(
   setup_requires=["py2app"],
 	data_files=['English.lproj', 'buildbot.png'],
 	options=dict(py2app=dict(
-		iconfile="BuildGrowler.icns",
+		iconfile="icon/BuildGrowler.icns",
 		plist=dict(CFBundleName='BuildGrowler'),
 		))
 )
