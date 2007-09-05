@@ -253,7 +253,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
 		immediately before the first pass through the main event
 		loop.
 		"""
-    self.statusText.setStringValue_(u"http://code.google.com/p/buildgrowler/")
+		self.statusText.setStringValue_(u"http://code.google.com/p/buildgrowler/")
 		# Set up some default values
 		# FIXME: Remember values from last time???
 		self.hostText.setStringValue_("")
