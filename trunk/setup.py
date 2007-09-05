@@ -29,14 +29,15 @@ import sys
 # setuptools.
 if sys.hexversion < 0x02040000:
     import py2app
-    setup_requires=None
+    setup_options=dict()
+    py2app_options=dict(packages='zope')
 else:
     from setuptools import setup
-    setup_requires=["py2app"],
+    setup_options=dict(setup_requires=["py2app"])
+    py2app_options=dict()
 
 setup(
     app=['src/BuildGrowler.py'],
-    setup_requires=setup_requires,
     data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
     options=dict(py2app=dict(
         iconfile="icon/BuildGrowler.icns",
@@ -49,8 +50,9 @@ setup(
             #CFBundleVersion='0.1', # build version
             CFBundleShortVersionString='0.1' # release-version-number
         ),
-
-    ))
+        **py2app_options # Options from above
+    )),
+    **setup_options # Options from above   
 )
 
 # vim:ts=4:sw=4:et:
