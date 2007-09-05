@@ -25,9 +25,9 @@ from distutils.core import setup
 from setuptools import setup
 
 setup(
-	app=['BuildGrowler.py'],
+	app=['src/BuildGrowler.py'],
   setup_requires=["py2app"],
-	data_files=['English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
+	data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
 	options=dict(py2app=dict(
 		iconfile="icon/BuildGrowler.icns",
 		plist=dict(CFBundleName='BuildGrowler'),
