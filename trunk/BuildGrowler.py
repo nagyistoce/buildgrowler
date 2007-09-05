@@ -61,7 +61,7 @@ class BuildGrowlerNotifier(Growl.GrowlNotifier):
 	NOTIFICATION_BUILD_ERROR = 3
 	# Why does this not work?
 	#applicationIcon=Growl.Image.imageWithIconForCurrentApplication()
-	applicationIcon=Growl.Image.imageFromPath("buildbot.png")
+	applicationIcon=Growl.Image.imageFromPath("BuildGrowlerIcon48x48.png")
 
 
 class StatusClient(pb.Referenceable):
