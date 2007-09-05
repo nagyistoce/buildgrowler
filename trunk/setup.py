@@ -48,7 +48,7 @@ setup(
             CFBundleName='BuildGrowler',
             NSHumanReadableCopyright='Copyright 2007 Christian L. Jacobsen',
             #CFBundleVersion='0.1', # build version
-            CFBundleShortVersionString='0.1' # release-version-number
+            CFBundleShortVersionString='0.1.1' # release-version-number
         ),
         **py2app_options # Options from above
     )),
