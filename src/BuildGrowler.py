@@ -312,7 +312,6 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         immediately before the first pass through the main event
         loop.
         """
-        self.statusText.setStringValue_(u"http://code.google.com/p/buildgrowler/")
         # Set up the application defaults
         self.defaults = NSUserDefaults.standardUserDefaults()
         self.setDefaultDefaults()
