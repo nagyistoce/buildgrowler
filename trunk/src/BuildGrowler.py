@@ -12,13 +12,13 @@
 #    the Free Software Foundation; either version 2 of the License, or
 #    (at your option) any later version.
 #
-#    Foobar is distributed in the hope that it will be useful,
+#    BuildGrowler is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with Foobar; if not, write to the Free Software
+#    along with BuildGrowler; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import sys
@@ -171,6 +171,8 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         theself = self
         class MyPBClientFactory(pb.PBClientFactory):
             def clientConnectionLost(self, connector, reason, reconnecting=0):
+                # FIXME: I have never seen this happen, but should we do as with
+                # clientConnectionFailed???
                 print "Lost connection"
             def clientConnectionFailed(self, connector, reason):    
                 theself.not_connected(reason)
@@ -199,17 +201,14 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
                 TimerService.__init__(self, 30, self.callme)
 
             def callme(self):   
-                #print "moo"
                 self.ref.callRemote("getBuilderNames").addErrback(self.fux)
 
             def fux(self, thingy):
-                #print "asdasd"
                 pass
 
 
         t = Thingy(ref)
         t.startService()
-        #print "foobar"
 
     def not_connected(self, why):   
         str = "Could not connect"
