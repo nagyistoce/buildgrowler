@@ -168,11 +168,12 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         self.recentHosts = recentHosts
 
     def startConnecting(self, host, port):
+        theself = self
         class MyPBClientFactory(pb.PBClientFactory):
             def clientConnectionLost(self, connector, reason, reconnecting=0):
                 print "Lost connection"
             def clientConnectionFailed(self, connector, reason):    
-                print "Failed connection"
+                theself.not_connected(reason)
         #cf = pb.PBClientFactory()
         cf = MyPBClientFactory()
         creds = credentials.UsernamePassword("statusClient", "clientpw")
