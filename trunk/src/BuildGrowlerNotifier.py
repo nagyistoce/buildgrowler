@@ -20,7 +20,9 @@
 #    along with BuildGrowler; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+# Growl
 import Growl 
+
 
 class BuildGrowlerNotifier(Growl.GrowlNotifier):
     applicationName = 'BuildGrowler'

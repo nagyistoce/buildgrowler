@@ -20,21 +20,26 @@
 #    along with BuildGrowler; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-# PyObjC
-import objc
-from AppKit import *
-from PyObjCTools import NibClassBuilder
+
+##############################################################################
+# Twisted
+##############################################################################
+# http://twistedmatrix.com/trac/changeset/18387
+# http://twistedmatrix.com/trac/ticket/1833
+# Use of threadselectreactor is not recommended it seems
+#from twisted.internet.threadedselectreactor import install
+#reactor = install()
+from twisted.internet import _threadedselect 
+reactor = _threadedselect.install() 
+#from twisted.internet import cfreactor
+#cfreactor.install()
 
 
-class BuildGrowlerWindow(NibClassBuilder.AutoBaseClass):    
-    def initWithContentRect_styleMask_backing_defer_(self, rect, style, backing, defer):
-        self = super(BuildGrowlerWindow,
-                self).initWithContentRect_styleMask_backing_defer_(rect, style,
-                        backing, defer)
-        if self is None: return None
 
-        bg = NSColor.colorWithDeviceRed_green_blue_alpha_(0.7, 0.7, 0.7, 1.0)
-        self.setBackgroundColor_(bg)
-        return self
+
+##############################################################################
+# Growl
+##############################################################################
+growl = None
 
 # vim:ts=4:sw=4:et:

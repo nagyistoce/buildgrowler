@@ -37,7 +37,7 @@ else:
     py2app_options=dict()
 
 setup(
-    app=['src/BuildGrowler.py'],
+    app=['src/main.py'],
     data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
     options=dict(py2app=dict(
         iconfile="icon/BuildGrowler.icns",
