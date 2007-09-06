@@ -285,10 +285,12 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
 
 	def start_(self, sender):
 		self.startButton.setEnabled_(False)
+		host = self.hostText.objectValue()
+		# FIXME: Error checking, alow only numbers
+		port = int(self.portText.objectValue())
 		self.hostText.setEnabled_(False)
 		self.portText.setEnabled_(False)
-		self.buildGrowler.start(self, self.hostText.objectValue(),
-				int(self.portText.objectValue()))
+		self.buildGrowler.start(self, host, port)
 
 	def stop_(self, sender):
 		self.buildGrowler.stop()
