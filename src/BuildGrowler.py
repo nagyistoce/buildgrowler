@@ -55,17 +55,7 @@ NibClassBuilder.extractClasses("MainMenu")
 
 # BuildGrowler imports
 import BuildGrowlerWindow
-
-class BuildGrowlerNotifier(Growl.GrowlNotifier):
-    applicationName = 'BuildGrowler'
-    notifications = ['BuildGrowler Status', 'Build Started', 'Build Finished', 'Build Error']
-    NOTIFICATION_STATUS      = 0
-    NOTIFICATION_BUILD_START = 1
-    NOTIFICATION_BUILD_END   = 2
-    NOTIFICATION_BUILD_ERROR = 3
-    # Why does this not work?
-    #applicationIcon=Growl.Image.imageWithIconForCurrentApplication()
-    applicationIcon=Growl.Image.imageFromPath("BuildGrowlerIcon48x48.png")
+from BuildGrowlerNotifier import *
 
 
 class StatusClient(pb.Referenceable):
