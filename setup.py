@@ -46,6 +46,7 @@ setup(
         # 'Cocoa Application Tutorial' in the 'ADC Reference Library'
         plist=dict(
             CFBundleName='BuildGrowler',
+            CFBundleIdentifier='org.transterpreter.BuildGrowler',
             NSHumanReadableCopyright='Copyright 2007 Christian L. Jacobsen',
             #CFBundleVersion='0.1', # build version
             CFBundleShortVersionString='0.1.1' # release-version-number
