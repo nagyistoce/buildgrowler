@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #    BuildGrowler, a tool for being notified of BuildBot actions and 
 #    failuers on Mac OS X. 
 #    http://code.google.com/p/buildgrowler/
@@ -22,19 +23,27 @@
 
 # PyObjC
 import objc
-from AppKit import *
-from PyObjCTools import NibClassBuilder
+from PyObjCTools import NibClassBuilder, AppHelper
+# Must be done before we start importing NibClassBuilder.AutoBaseClass classes
+NibClassBuilder.extractClasses("MainMenu")
+
+# BuildGrowler imports
+import globals
+import BuildGrowlerWindow
+import BuildGrowlerController
+from BuildGrowlerNotifier import *
+from BuildGrowler import *
 
 
-class BuildGrowlerWindow(NibClassBuilder.AutoBaseClass):    
-    def initWithContentRect_styleMask_backing_defer_(self, rect, style, backing, defer):
-        self = super(BuildGrowlerWindow,
-                self).initWithContentRect_styleMask_backing_defer_(rect, style,
-                        backing, defer)
-        if self is None: return None
+def setupGrowl():
+    globals.growl = BuildGrowlerNotifier()
+    globals.growl.register()
+    globals.growl.notify(globals.growl.notifications[globals.growl.NOTIFICATION_STATUS],
+            "BuildGrowler",
+            "Initialised")
 
-        bg = NSColor.colorWithDeviceRed_green_blue_alpha_(0.7, 0.7, 0.7, 1.0)
-        self.setBackgroundColor_(bg)
-        return self
+if __name__ == "__main__":
+    setupGrowl()
+    AppHelper.runEventLoop()
 
 # vim:ts=4:sw=4:et:

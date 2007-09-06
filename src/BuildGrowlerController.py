@@ -20,9 +20,15 @@
 #    along with BuildGrowler; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+# PyObjC
 import objc
 from AppKit import *
 from PyObjCTools import NibClassBuilder, AppHelper
+
+# BuildGrowler
+import globals
+from RecentHosts import *
+
 
 # class defined in MainMenu.nib
 class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
@@ -55,7 +61,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         # Set initial sate of buttons
         self.startButton.setEnabled_(True)
         self.stopButton.setEnabled_(False)
-        reactor.interleave(AppHelper.callAfter)
+        globals.reactor.interleave(AppHelper.callAfter)
 
     def setDefaultDefaults(self):
         defaults = dict()
@@ -64,10 +70,10 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         self.defaults.registerDefaults_(defaults)
 
     def applicationShouldTerminate_(self, sender):
-        if reactor.running:
-            reactor.addSystemEventTrigger(
+        if globals.reactor.running:
+            globals.reactor.addSystemEventTrigger(
                 'after', 'shutdown', AppHelper.stopEventLoop)
-            reactor.stop()
+            globals.reactor.stop()
             return False
         return True
 
