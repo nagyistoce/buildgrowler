@@ -105,7 +105,12 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
     def start_(self, sender):
         # Update the port text as this may not have happened, even though it
         # should. See controlTextDidEndEditing_'s comment
-        self.__updatePortFromString(self.hostText.stringValue())
+        # FIXME: This does not help at all, cos it makes it so that an existing
+        # host can never changes the port numner. I've disabled completion of
+        # the combobox for now, which is the real problem, as I get no
+        # notification (that I can see) that the field has autocompleted
+        # something, at which point I might want to update the port.
+        #self.__updatePortFromString(self.hostText.stringValue())
         # Do normal start button stuff
         self.startButton.setEnabled_(False)
         host = self.hostText.objectValue()
