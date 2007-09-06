@@ -174,7 +174,6 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
                 print "Lost connection"
             def clientConnectionFailed(self, connector, reason):    
                 theself.not_connected(reason)
-        #cf = pb.PBClientFactory()
         cf = MyPBClientFactory()
         creds = credentials.UsernamePassword("statusClient", "clientpw")
         d = cf.login(creds)
