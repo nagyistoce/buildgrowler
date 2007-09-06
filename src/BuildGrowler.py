@@ -321,7 +321,8 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         self.buildGrowler.setRecentHosts_(self.recentHosts)
         # Set up initial values in the UI
         if self.recentHosts.getLength() != 0:
-            # If the user has some recent hosts, use the first one
+            # If the user has some recent hosts, use the first one, otherwise we
+            # leave the values as what is set in the nib
             self.hostText.setStringValue_(self.recentHosts.getHostForIndex(0))
             self.portText.setStringValue_(self.recentHosts.getPortForIndex(0))
         # Set initial sate of buttons
