@@ -39,6 +39,16 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
     # portText
     # statusText
 
+    def __init__(self):
+        self.lastHostText = None
+        
+    def init(self):
+        self = super(BuildGrowlerController, self).init()
+        if self is None: return None
+        self.__init__()
+        return self
+
+ 
     def applicationDidFinishLaunching_(self, aNotification):
         """
         Invoked by NSApplication once the app is done launching and
@@ -139,6 +149,13 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
     # hit the start button w/o first removing focus from the combobox.
     def controlTextDidEndEditing_(self, n):
         if n.object() is self.hostText:
-            self.__updatePortFromString(n.object().stringValue())
+            # If somebody enters and exits the host editor, and the text did not
+            # change, do NOT update the port... the user might be in the process
+            # of updating it.
+            hostText = n.object().stringValue()
+            if self.lastHostText == hostText:
+                return
+            self.__updatePortFromString(hostText)
+            self.lastHostText = hostText
 
 # vim:ts=4:sw=4:et:
