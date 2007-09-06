@@ -20,19 +20,17 @@
 #    along with BuildGrowler; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import objc
-from AppKit import *
-from PyObjCTools import NibClassBuilder
+import Growl 
 
-class BuildGrowlerWindow(NibClassBuilder.AutoBaseClass):    
-    def initWithContentRect_styleMask_backing_defer_(self, rect, style, backing, defer):
-        self = super(BuildGrowlerWindow,
-                self).initWithContentRect_styleMask_backing_defer_(rect, style,
-                        backing, defer)
-        if self is None: return None
-
-        bg = NSColor.colorWithDeviceRed_green_blue_alpha_(0.7, 0.7, 0.7, 1.0)
-        self.setBackgroundColor_(bg)
-        return self
+class BuildGrowlerNotifier(Growl.GrowlNotifier):
+    applicationName = 'BuildGrowler'
+    notifications = ['BuildGrowler Status', 'Build Started', 'Build Finished', 'Build Error']
+    NOTIFICATION_STATUS      = 0
+    NOTIFICATION_BUILD_START = 1
+    NOTIFICATION_BUILD_END   = 2
+    NOTIFICATION_BUILD_ERROR = 3
+    # Why does this not work?
+    #applicationIcon=Growl.Image.imageWithIconForCurrentApplication()
+    applicationIcon=Growl.Image.imageFromPath("BuildGrowlerIcon48x48.png")
 
 # vim:ts=4:sw=4:et:
