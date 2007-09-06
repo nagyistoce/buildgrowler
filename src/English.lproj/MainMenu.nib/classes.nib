@@ -7,8 +7,8 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 buildGrowler = BuildGrowler; 
-                hostText = NSFormCell; 
-                portText = NSFormCell; 
+                hostText = NSComboBox; 
+                portText = NSTextField; 
                 quitButton = NSButton; 
                 startButton = NSButton; 
                 statusText = NSTextField; 
