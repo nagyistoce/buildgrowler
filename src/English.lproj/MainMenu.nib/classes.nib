@@ -16,6 +16,7 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
+        {CLASS = BuildGrowlerWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 
