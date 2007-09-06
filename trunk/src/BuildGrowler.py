@@ -320,12 +320,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         self.hostText.setDataSource_(self.recentHosts)
         self.buildGrowler.setRecentHosts_(self.recentHosts)
         # Set up initial values in the UI
-        if self.recentHosts.getLength() == 0:
-            # If there are no stored hosts, just set up a default port number
-            # This may or may not be helpful :)
-            # Also, is this not also set in the nib?
-            self.portText.setStringValue_("9988")
-        else:
+        if self.recentHosts.getLength() != 0:
             # If the user has some recent hosts, use the first one
             self.hostText.setStringValue_(self.recentHosts.getHostForIndex(0))
             self.portText.setStringValue_(self.recentHosts.getPortForIndex(0))
