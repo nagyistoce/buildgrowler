@@ -293,8 +293,20 @@ class RecentHosts(NSObject):
     def numberOfItemsInComboBox_(self, combobox):
         return self.getLength()
 
-    
-        
+       
+class BuildGrowlerWindow(NibClassBuilder.AutoBaseClass):    
+    def initWithContentRect_styleMask_backing_defer_(self, rect, style, backing, defer):
+        self = super(BuildGrowlerWindow,
+                self).initWithContentRect_styleMask_backing_defer_(rect, style,
+                        backing, defer)
+        if self is None: return None
+
+        bg = NSColor.colorWithDeviceRed_green_blue_alpha_(0.7, 0.7, 0.7, 1.0)
+        self.setBackgroundColor_(bg)
+        return self
+
+
+
 
 # class defined in MainMenu.nib
 class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
