@@ -116,9 +116,17 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         host = self.hostText.objectValue()
         # FIXME: Error checking, alow only numbers
         port = int(self.portText.objectValue())
+        # FIXME: Store in keychain
+        # Some Twisted bits do not like it when I pass in the PyObjC unicode
+        # type object which comes out of here. Instead turn it into an str for
+        # all round glorious happiness
+        username = str(self.credUserName.objectValue())
+        password = str(self.credPassword.objectValue())
         self.hostText.setEnabled_(False)
         self.portText.setEnabled_(False)
-        self.buildGrowler.start(self, host, port)
+        self.credUserName.setEnabled_(False)
+        self.credPassword.setEnabled_(False)
+        self.buildGrowler.start(self, host, port, username, password)
 
     def stop_(self, sender):
         self.buildGrowler.stop()
