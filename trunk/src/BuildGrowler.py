@@ -73,8 +73,8 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         # I have discovered that the UsernamePassword method does not like
         # PyObjC objects, at least not the ones I was passing. We should ensure
         # that we have strings here therefore, to avoid future confusion.
-        assert type(username) = str
-        assert type(password) = str
+        assert type(username) == str
+        assert type(password) == str
         creds = credentials.UsernamePassword(username, password)
         d = cf.login(creds)
         self.connection = globals.reactor.connectTCP(host, port, cf)
