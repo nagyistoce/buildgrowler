@@ -7,6 +7,8 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 buildGrowler = BuildGrowler; 
+                credPassword = NSSecureTextField; 
+                credUserName = NSTextField; 
                 hostText = NSComboBox; 
                 portText = NSTextField; 
                 quitButton = NSButton; 
@@ -16,7 +18,13 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = BuildGrowlerWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
+        {
+            ACTIONS = {showHideCredentials = id; }; 
+            CLASS = BuildGrowlerWindow; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {credentialsView = NSView; topBox = NSBox; }; 
+            SUPERCLASS = NSWindow; 
+        }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 
