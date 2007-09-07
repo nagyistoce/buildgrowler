@@ -51,16 +51,16 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         self.__init__()
         return self
 
-    def run(self, host, port):
+    def run(self, host, port, username, password):
         """Start the client."""
         globals.reactor.interleave(AppHelper.callAfter)
-        self.startConnecting(host, port)
+        self.startConnecting(host, port, username, password)
         #reactor.run()
 
     def setRecentHosts_(self, recentHosts):
         self.recentHosts = recentHosts
 
-    def startConnecting(self, host, port):
+    def startConnecting(self, host, port, username, password):
         theself = self
         class MyPBClientFactory(pb.PBClientFactory):
             def clientConnectionLost(self, connector, reason, reconnecting=0):
@@ -70,7 +70,12 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
             def clientConnectionFailed(self, connector, reason):    
                 theself.not_connected(reason)
         cf = MyPBClientFactory()
-        creds = credentials.UsernamePassword("statusClient", "clientpw")
+        # I have discovered that the UsernamePassword method does not like
+        # PyObjC objects, at least not the ones I was passing. We should ensure
+        # that we have strings here therefore, to avoid future confusion.
+        assert type(username) = str
+        assert type(password) = str
+        creds = credentials.UsernamePassword(username, password)
         d = cf.login(creds)
         self.connection = globals.reactor.connectTCP(host, port, cf)
         d.addCallbacks(self.connected, self.not_connected)
@@ -112,6 +117,8 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         self.caller.startButton.setEnabled_(True)
         self.caller.hostText.setEnabled_(True)
         self.caller.portText.setEnabled_(True)
+        self.caller.credUserName.setEnabled_(True)
+        self.caller.credPassword.setEnabled_(True)
                 
 
     def disconnected(self, ref):    
@@ -122,10 +129,12 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         self.caller.stopButton.setEnabled_(False)
         self.caller.hostText.setEnabled_(True)
         self.caller.portText.setEnabled_(True)
+        self.caller.credUserName.setEnabled_(True)
+        self.caller.credPassword.setEnabled_(True)
 
-    def start(self, caller, host, port):
+    def start(self, caller, host, port, username, password):
         self.caller = caller
-        self.run(host, port)
+        self.run(host, port, username, password)
 
     def stop(self):
         self.connection.disconnect();
