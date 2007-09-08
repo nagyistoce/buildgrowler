@@ -40,7 +40,8 @@ setup(
     app=['src/main.py'],
     data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
     options=dict(py2app=dict(
-        iconfile="icon/BuildGrowler.icns",
+        iconfile='icon/BuildGrowler.icns',
+        frameworks='src/Frameworks/BGUtils/build/Release/BGUtils.framework',
         # For a short list of these with descriptions, see the 
         # 'Essential Application Identification Properties' section in the
         # 'Cocoa Application Tutorial' in the 'ADC Reference Library'
