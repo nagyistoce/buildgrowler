@@ -69,15 +69,12 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
             # leave the values as what is set in the nib
             self.hostText.setStringValue_(self.recentHosts.getHostForIndex(0))
             self.portText.setStringValue_(self.recentHosts.getPortForIndex(0))
-            if self.recentHosts.getUserNameForIndex(0):
+            username = self.recentHosts.getUserNameForIndex(0)
+            if username:
                 self.credUserName.setStringValue_(self.recentHosts.getUserNameForIndex(0))
-            # We don't store an actual password, just some spaces to indicate to
-            # the user that there actually is a password.
-            if self.recentHosts.getHasPasswordForIndex(0):
+                # We don't store an actual password, just some spaces to indicate to
+                # the user that there actually is a password.
                 self.credPassword.setStringValue_('        ')
-                self.fakePassword = True
-            else:
-                self.fakePassword = False
         # Set initial sate of buttons
         self.startButton.setEnabled_(True)
         self.stopButton.setEnabled_(False)
@@ -183,27 +180,18 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         if type(x) is int:
             i = x
         elif type(x) is objc.pyobjc_unicode:
-            print x
             i = self.recentHosts.getIndexForHost(x)
-            print i
         else:
             raise Exception('I didn\'t like what you passed into __updateCredentials (%s %s)' % (type(x), x))
-        u = p = None
+        u = None
         if i != None:
             u = self.recentHosts.getUserNameForIndex(i)
-            p = self.recentHosts.getHasPasswordForIndex(i)
         if u:
             self.credUserName.setStringValue_(u)
+            self.credPassword.setStringValue_('        ')
         else:
             self.credUserName.setStringValue_('')
-        # We don't store an actual password, just some spaces to indicate to
-        # the user that there actually is a password.
-        if p:
-            self.credPassword.setStringValue_('        ')
-            self.fakePassword = True
-        else:
             self.credPassword.setStringValue_('')
-            self.fakePassword = False
 
     # Whenever a new character is typed
     def controlTextDidChange_(self, n):

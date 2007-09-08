@@ -68,12 +68,6 @@ class RecentHosts(NSObject):
         except IndexError:
             return None
 
-    def getHasPasswordForIndex(self, index):
-        try:
-            return self.__getRecentHosts()[index][3]
-        except IndexError:
-            return False
-
     def getLength(self):
         return len(self.__getRecentHosts())
 
