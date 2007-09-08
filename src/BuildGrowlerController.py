@@ -27,6 +27,7 @@ from PyObjCTools import NibClassBuilder, AppHelper
 
 # BuildGrowler
 import globals
+import BGUtils
 from RecentHosts import *
 
 
@@ -68,6 +69,15 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
             # leave the values as what is set in the nib
             self.hostText.setStringValue_(self.recentHosts.getHostForIndex(0))
             self.portText.setStringValue_(self.recentHosts.getPortForIndex(0))
+            if self.recentHosts.getUserNameForIndex(0):
+                self.credUserName.setStringValue_(self.recentHosts.getUserNameForIndex(0))
+            # We don't store an actual password, just some spaces to indicate to
+            # the user that there actually is a password.
+            if self.recentHosts.getHasPasswordForIndex(0):
+                self.credPassword.setStringValue_('        ')
+                self.fakePassword = True
+            else:
+                self.fakePassword = False
         # Set initial sate of buttons
         self.startButton.setEnabled_(True)
         self.stopButton.setEnabled_(False)
@@ -122,6 +132,21 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         # all round glorious happiness
         username = str(self.credUserName.objectValue())
         password = str(self.credPassword.objectValue())
+        # Check if there is a password in the keychain for this item
+        keychain = self.__getKeychain()
+        result =\
+        keychain.findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
+                host,
+                None,
+                username,
+                None,
+                port,
+                BGUtils.fourCharCode2Int('BBoT'),
+                # FIXME: I should define these somewhere, BGUtils
+                # probably... I suspect there is no automagic way of getting
+                # them from ObjC
+                BGUtils.fourCharCode2Int('dflt'))
+
         self.hostText.setEnabled_(False)
         self.portText.setEnabled_(False)
         self.credUserName.setEnabled_(False)
@@ -130,6 +155,14 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
 
     def stop_(self, sender):
         self.buildGrowler.stop()
+
+    def __getKeychain(self):
+        try:
+            return self.keychain
+        except AttributeError:    
+            # Make a new default keychain if there was none already
+            self.keychain = BGUtils.AIKeychain.keychainWithKeychainRef_(None)
+            return self.keychain
 
     #########################################################################
     # Combo Box updates
@@ -145,15 +178,44 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         if port:
             self.portText.setStringValue_(port)
 
+    def __updateCredentials(self, x):
+        i = None
+        if type(x) is int:
+            i = x
+        elif type(x) is objc.pyobjc_unicode:
+            print x
+            i = self.recentHosts.getIndexForHost(x)
+            print i
+        else:
+            raise Exception('I didn\'t like what you passed into __updateCredentials (%s %s)' % (type(x), x))
+        u = p = None
+        if i != None:
+            u = self.recentHosts.getUserNameForIndex(i)
+            p = self.recentHosts.getHasPasswordForIndex(i)
+        if u:
+            self.credUserName.setStringValue_(u)
+        else:
+            self.credUserName.setStringValue_('')
+        # We don't store an actual password, just some spaces to indicate to
+        # the user that there actually is a password.
+        if p:
+            self.credPassword.setStringValue_('        ')
+            self.fakePassword = True
+        else:
+            self.credPassword.setStringValue_('')
+            self.fakePassword = False
+
     # Whenever a new character is typed
     def controlTextDidChange_(self, n):
         if n.object() is self.hostText:
             self.__updatePortFromString(n.object().stringValue())
+            self.__updateCredentials(n.object().stringValue())
 
     # Fired whenever a new selection is made from the dropdown in the combobox
     def comboBoxSelectionDidChange_(self, n):
         if n.object() is self.hostText:
             self.__updatePortFromIndex(n.object().indexOfSelectedItem())
+            self.__updateCredentials(n.object().indexOfSelectedItem())
 
     # This is fired when editing ends, mostly when the cursor leaves the
     # combobox. This catches cases where the selected autocompletion text
@@ -162,6 +224,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
     # hit the start button w/o first removing focus from the combobox.
     def controlTextDidEndEditing_(self, n):
         if n.object() is self.hostText:
+            self.__updateCredentials(n.object().stringValue())
             # If somebody enters and exits the host editor, and the text did not
             # change, do NOT update the port... the user might be in the process
             # of updating it.

@@ -41,17 +41,20 @@ class RecentHosts(NSObject):
     def __setRecentHosts(self, l):
         self.defaults.setObject_forKey_(l, u'RecentHosts')
 
-    # FIXME:
-    # Change this into a method which returns the index and then the user can
-    # use getPortForIndex instead
-    def getPortForHost(self, host):
+    def getIndexForHost(self, host):
         recentHosts = self.__getRecentHosts()
         hosts = [h[0] for h in recentHosts]
         try:
             i = hosts.index(host)
-            return recentHosts[i][1]
+            return i
         except ValueError:
             return None
+
+    def getPortForHost(self, host):
+        index = self.getIndexForHost(host)
+        if index:
+            return self.getHostForIndex(index)
+        return None
 
     def getPortForIndex(self, index):
         return self.__getRecentHosts()[index][1]
@@ -59,12 +62,24 @@ class RecentHosts(NSObject):
     def getHostForIndex(self, index):
         return self.__getRecentHosts()[index][0]
 
+    def getUserNameForIndex(self, index):
+        try:
+            return self.__getRecentHosts()[index][2]
+        except IndexError:
+            return None
+
+    def getHasPasswordForIndex(self, index):
+        try:
+            return self.__getRecentHosts()[index][3]
+        except IndexError:
+            return False
+
     def getLength(self):
         return len(self.__getRecentHosts())
 
-    def addHost_Port_(self, host, port):
+    def add(self, host, port, username = None, password = False):
         hosts = self.__getRecentHosts()
-        newHosts = [(host, port)]
+        newHosts = [(host, port, username, password)]
         for h in hosts:
             if host != h[0]:
                 newHosts.append(h)
