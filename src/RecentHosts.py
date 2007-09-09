@@ -52,8 +52,8 @@ class RecentHosts(NSObject):
 
     def getPortForHost(self, host):
         index = self.getIndexForHost(host)
-        if index:
-            return self.getHostForIndex(index)
+        if index != None:
+            return self.getPortForIndex(index)
         return None
 
     def getPortForIndex(self, index):
@@ -71,9 +71,9 @@ class RecentHosts(NSObject):
     def getLength(self):
         return len(self.__getRecentHosts())
 
-    def add(self, host, port, username = None, password = False):
+    def add(self, host, port, username = None):
         hosts = self.__getRecentHosts()
-        newHosts = [(host, port, username, password)]
+        newHosts = [(host, port, username)]
         for h in hosts:
             if host != h[0]:
                 newHosts.append(h)
