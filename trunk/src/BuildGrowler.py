@@ -74,7 +74,7 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         # PyObjC objects, at least not the ones I was passing. We should ensure
         # that we have strings here therefore, to avoid future confusion.
         assert type(username) == str
-        assert type(password) == str
+        assert (type(password) is str) or (type(password) is unicode)
         # Store these away so we can save them later if the connection happened
         self.credentials = {'username': None, 'hasPassword': False}
         if username:
