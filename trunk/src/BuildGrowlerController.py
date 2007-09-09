@@ -82,7 +82,6 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
                 return (True, None, None)
 
         portFormatter = PortNumberFormatter.alloc().init()
-        print portFormatter.format(), portFormatter.maximum()
         self.portText.cell().setFormatter_(portFormatter)
 
 
@@ -194,7 +193,6 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
                     # probably... I suspect there is no automagic way of getting
                     # them from ObjC
                     BGUtils.fourCharCode2Int('dflt'))
-            print result
             password = str(result[0])
 
         self.hostText.setEnabled_(False)
