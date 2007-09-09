@@ -49,7 +49,13 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         self.__init__()
         return self
 
- 
+    def awakeFromNib(self):
+        # A few menu items that we are not using at the moment, but might be
+        # using in the future.
+        self.menuitem_help.setEnabled_(False)
+        self.menuitem_preferences.setEnabled_(False)
+
+
     def applicationDidFinishLaunching_(self, aNotification):
         """
         Invoked by NSApplication once the app is done launching and
