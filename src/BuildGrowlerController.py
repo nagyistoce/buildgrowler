@@ -131,18 +131,32 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         password = str(self.credPassword.objectValue())
         # Check if there is a password in the keychain for this item
         keychain = self.__getKeychain()
-        result =\
-        keychain.findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
-                host,
-                None,
-                username,
-                None,
-                port,
-                BGUtils.fourCharCode2Int('BBoT'),
-                # FIXME: I should define these somewhere, BGUtils
-                # probably... I suspect there is no automagic way of getting
-                # them from ObjC
-                BGUtils.fourCharCode2Int('dflt'))
+        if password != '        ':
+            result = \
+            keychain.setInternetPassword_forServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
+                    password,
+                    host,
+                    None,
+                    username,
+                    None,
+                    port,
+                    BGUtils.fourCharCode2Int('BBoT'),
+                    BGUtils.fourCharCode2Int('dflt'))
+        else:
+            result =\
+            keychain.findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
+                    host,
+                    None,
+                    username,
+                    None,
+                    port,
+                    BGUtils.fourCharCode2Int('BBoT'),
+                    # FIXME: I should define these somewhere, BGUtils
+                    # probably... I suspect there is no automagic way of getting
+                    # them from ObjC
+                    BGUtils.fourCharCode2Int('dflt'))
+            print result
+            password = str(result[0])
 
         self.hostText.setEnabled_(False)
         self.portText.setEnabled_(False)
