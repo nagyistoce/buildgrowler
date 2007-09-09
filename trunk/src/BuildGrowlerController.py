@@ -54,6 +54,36 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         # using in the future.
         self.menuitem_help.setEnabled_(False)
         self.menuitem_preferences.setEnabled_(False)
+        # Set a number formatter for the port field, so users can't type text or
+        # out of range ports.
+        class PortNumberFormatter(NSNumberFormatter):
+            def init(self):
+                self = super(PortNumberFormatter, self).init()
+                if self is None: return None
+                self.setMinimum_(1)
+                self.setMaximum_(65535)
+                self.setFormat_(u'0')
+                self.setHasThousandSeparators_(False)
+                return self
+
+            def isPartialStringValid_newEditingString_errorDescription_(self, partialString):
+                # Allow an empty string:
+                if partialString == '':
+                    return (True, None, None)
+                # Check if the thing coming in is a number
+                i = None
+                try:
+                    i = int(partialString)
+                except ValueError:
+                    return (False, None, u'The entered value is not a number')
+                # Check if it is in the valid range
+                if i < self.minimum() or i > self.maximum():
+                    return (False, None, u'Invalid port range')
+                return (True, None, None)
+
+        portFormatter = PortNumberFormatter.alloc().init()
+        print portFormatter.format(), portFormatter.maximum()
+        self.portText.cell().setFormatter_(portFormatter)
 
 
     def applicationDidFinishLaunching_(self, aNotification):
@@ -74,7 +104,10 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
             # If the user has some recent hosts, use the first one, otherwise we
             # leave the values as what is set in the nib
             self.hostText.setStringValue_(self.recentHosts.getHostForIndex(0))
-            self.portText.setStringValue_(self.recentHosts.getPortForIndex(0))
+            # FIXME: Perhaps we should check if it really is an int value coming
+            # in, in case the defaults database has got confused about
+            # something.
+            self.portText.setIntValue_(self.recentHosts.getPortForIndex(0))
             username = self.recentHosts.getUserNameForIndex(0)
             if username:
                 self.credUserName.setStringValue_(self.recentHosts.getUserNameForIndex(0))
@@ -188,12 +221,12 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
     def __updatePortFromString(self, s):
         port = self.recentHosts.getPortForHost(s)
         if port:
-            self.portText.setStringValue_(port)
+            self.portText.setIntValue_(port)
 
     def __updatePortFromIndex(self, s):
         port = self.recentHosts.getPortForIndex(s)
         if port:
-            self.portText.setStringValue_(port)
+            self.portText.setIntValue_(port)
 
     def __updateCredentials(self, x):
         i = None
