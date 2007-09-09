@@ -38,4 +38,7 @@ which should in fact have been an alias to:
 This could be a quirk with alias builds only, never tried a real build. It could
 also be a specific problem with the old (but working) version of py2app that I
 am using. I'm using it cos I can't get anything else to work :(
-  
+
+Real builds are ok, however the Democrazy player project reports in a comment in
+their setup.py file that they have problems with alias builds and frameworks
+too. That is a real pain...
