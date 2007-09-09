@@ -76,11 +76,9 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         assert type(username) == str
         assert (type(password) is str) or (type(password) is unicode)
         # Store these away so we can save them later if the connection happened
-        self.credentials = {'username': None, 'hasPassword': False}
+        self.username = None
         if username:
-            self.credentials['username'] = username
-        if password:
-            self.credentials['hasPassword'] = True
+            self.username = username
         creds = credentials.UsernamePassword(username, password)
         d = cf.login(creds)
         self.connection = globals.reactor.connectTCP(host, port, cf)
@@ -96,8 +94,7 @@ class BuildGrowler(NibClassBuilder.AutoBaseClass):
         self.caller.stopButton.setEnabled_(True)
         # Now that we have connected successfully add the host/port to the
         # recent hosts
-        self.recentHosts.add(self.connection.host, self.connection.port, 
-                self.credentials['username'], self.credentials['hasPassword'])
+        self.recentHosts.add(self.connection.host, self.connection.port, self.username)
 
         # This seems to make a difference in detecting dropped connections!
         class Thingy(TimerService):
