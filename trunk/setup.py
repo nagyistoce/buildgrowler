@@ -20,8 +20,108 @@
 #    along with BuildGrowler; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from distutils.core import setup
 import sys
+
+from distutils.core import setup
+import distutils.cmd 
+import distutils.command.build
+
+from distutils.util import *
+import distutils.spawn as d_spawn
+import os
+from py2app.util import makedirs
+class build_frameworks(distutils.cmd.Command):
+    description = "Builds OS X Frameworks"
+    user_options = [
+            ('frameworks', None, "A list of frameworks to build"),
+            ('target', None, "The target to build (for all frameworks)")]
+    def initialize_options(self):
+        self.frameworks = None
+        self.configuration = 'Release'
+        self.target = None
+        self.dist_dir = None
+        self.bdist_dir = None
+        self.framework_dir = None
+        self.framework_temp = None
+        self.temp_dir = None
+        self.xcodebuild = None
+        self.alias = None
+
+    def finalize_options(self):
+        # I don't know of a better way of getting this directory other than
+        # copying the relevant code from py2app.build_app into here...
+        py2app = self.get_finalized_command('py2app')
+        py2app.create_directories()
+        self.set_undefined_options('py2app', 
+                ('dist_dir', 'dist_dir'),
+                ('bdist_dir', 'bdist_dir'),
+                ('framework_dir', 'framework_dir'),
+                ('temp_dir', 'temp_dir'),
+                ('alias', 'alias'))
+        self.framework_temp = os.path.join(self.temp_dir, 'BuiltFrameworks')
+        # I want absolute paths:
+        self.framework_dir = os.path.abspath(self.framework_dir)
+        self.temp_dir = os.path.abspath(self.temp_dir)
+        #self.ensure_dirname(self.frameworks)
+        #self.ensure_string(self.target)
+
+    def run(self):
+        # Nothing to do?
+        if self.frameworks is None:
+            return
+        # Find xcodebuild
+        self.xcodebuild = d_spawn.find_executable('xcodebuild')
+        if not self.xcodebuild:
+            raise DistutilsExecError('Could not find the xcodebuild command, ' \
+                  'have you installed Xcode?')
+        # Build things    
+        self.execute(self.__build, 
+                [self.frameworks], 
+                'Building Framework: %s' % (self.frameworks))
+        # If we are doing an alias build, we have to get py2app to link in the
+        # framework
+        if self.alias:
+            # (At least some) py2app(s) generate bad symlinks for frameworks in
+            # alias builds. Therefore we'll do it ourselves.
+            py2app = self.get_finalized_command('py2app')
+            app_path = os.path.join(
+                    self.dist_dir,
+                    py2app.get_appname() + '.app')
+            app_framework_path = os.path.join(
+                    app_path, 'Contents', 'Frameworks')
+            makedirs(app_framework_path)
+            # FIXME: Move somewhere else, ie into a Frameworks class, like the
+            # Extensions class
+            framework_name = os.path.split(self.frameworks)
+            if framework_name[1] == '':
+                framework_name = os.path.split(framework_name[0])[1]
+            else:
+                framework_name = framework_name[1]
+            framework_name = framework_name + '.framework'    
+            src = os.path.join(self.framework_dir, framework_name)
+            dst = os.path.join(app_framework_path, framework_name)
+            try:
+                os.remove(dst)
+            except:
+                pass
+            os.symlink( os.path.abspath(src), dst)
+
+
+    def __build(self, framework):
+        # We need to change into the project directory in order for xcodebuild
+        # to do its thing (ie the directory with the .xcodeproj in it)
+        cwd = os.getcwd()
+        os.chdir(framework)
+        self.spawn([
+            self.xcodebuild,
+            'CONFIGURATION_BUILD_DIR=%s' % (self.framework_dir),
+            'PROJECT_TEMP_DIR=%s' % (self.framework_temp)])
+        # However we MUST also put the cwd back to what it was, as other
+        # commands might rely on relative paths
+        os.chdir(cwd)
+                  
+
+distutils.command.build.build.sub_commands.append(('build_frameworks', None))
 
 # I'mm having some issues with py2app 0.3.6 and python2.3 (I think thats the
 # issue anyway). So if we are building with < 2.4 (ie the Apple supplied Python)
@@ -37,11 +137,14 @@ else:
     py2app_options=dict()
 
 setup(
+    cmdclass={'build_frameworks': build_frameworks},
     app=['src/main.py'],
     data_files=['src/English.lproj', 'icon/BuildGrowlerIcon48x48.png'],
-    options=dict(py2app=dict(
+    options=dict(
+        build_frameworks=(dict(frameworks='src/Frameworks/BGUtils/')),
+        py2app=dict(
         iconfile='icon/BuildGrowler.icns',
-        frameworks='src/Frameworks/BGUtils/build/Release/BGUtils.framework',
+        #frameworks='src/Frameworks/BGUtils/build/Release/BGUtils.framework',
         # For a short list of these with descriptions, see the 
         # 'Essential Application Identification Properties' section in the
         # 'Cocoa Application Tutorial' in the 'ADC Reference Library'
