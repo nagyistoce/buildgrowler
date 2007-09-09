@@ -11,5 +11,4 @@ def fourCharCode2Int(s):
     # perhaps I should not be so lazy and just write this out :)
     for c in s:
         i = (i << 8) + ord(c)
-    print i
     return i 
