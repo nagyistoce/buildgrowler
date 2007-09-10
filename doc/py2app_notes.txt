@@ -1,0 +1,81 @@
+As per the setup.py I've been having problems using py2app 0.3.6 with my Apple
+installed Python 2.3.5 installation. The generated binaries from a run with
+python2.3 setup.py py2app generates an application that when run produces the
+following output:
+===== Monday, 10 September 2007 13:49:19 Europe/Paris =====
+Traceback (most recent call last):
+  File "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/__boot__.py", line 31, in ?
+    _run('main.py')
+  File "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/__boot__.py", line 28, in _run
+    execfile(path, globals(), globals())
+  File "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/main.py", line 25, in ?
+    import objc
+  File "objc/__init__.pyc", line 17, in ?
+  File "objc/__init__.pyc", line 14, in _update
+  File "objc/_objc.pyc", line 18, in ?
+  File "objc/_objc.pyc", line 15, in __load
+ImportError: '/System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/lib-dynload/objc/_objc.so' not found
+2007-09-10 13:49:27.266 BuildGrowler[16625] BuildGrowler Error
+2007-09-10 13:49:27.267 BuildGrowler[16625] BuildGrowler Error
+An unexpected error has occurred during execution of the main script
+
+ImportError: '/System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/lib-dynload/objc/_objc.so' not found
+===== Monday, 10 September 2007 13:49:54 Europe/Paris =====  
+
+Searching on the net for: /System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/lib-dynload/objc/_objc.so not found
+
+turns up exactly one result(!): http://maba.wordpress.com/2006/08/31/incredible-2d-images-using-nodebox-universal-binary/
+
+It talks about how to build NodeBox as an Intel binary. It mentions, when
+installing PyObjC, NOT to install the bundled py2app items. It then goes on to
+mention my problem re: py2app and the not found _objc.so :
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Py2App seems to be broken and would produce a binary that prints an 
+error message upon startup:
+
+NodeBox Error 
+An unexpected error has occurred during execution of the main script
+
+ImportError: 
+'/System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/lib-dynload/objc/_objc.soâ' not found
+
+Very annoying! But there's an easy fix: we have to modify a file to 
+make it work and produce a proper NodeBox binary:
+
+In folder 'py2app/apptemplate' of the source package, open the source 
+file 'plist_template.pyâ' and locate the line (line 26)
+
+PyResourcePackages=[],
+
+and replace it with
+
+PyResourcePackages=[(s % version) for s in [ 
+u'lib/python%s', 
+u'lib/python%s/lib-dynload', 
+u'lib/python%s/site-packages', 
+u'lib/python%s/site-packages.zip', 
+]],
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+also, it goes on to mention a fix that might not reqiure messing with the py2app source:
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Troubleshooting
+If you forgot to patch Py2App and get the error message shown above, then try to modify the Info.plist of the built NodeBox application bundle. Replace
+
+PyResourcePackages
+
+with
+
+PyResourcePackages 
+lib/python2.3/lib-dynload 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+Having just tried the fix immediately above, I can verify that it works...
+
+I also found, that rather than patching py2app, the plist dictionary that gets
+passed to py2app is a fine place to set 'PyResourcePackages' to the value shown
+above (in the 'patch' fix). This has been applied in the source. It looks like a
+nice, crispy, and most importaly working UNIVERSAL BuildGrowler is now generated
+:)
+
