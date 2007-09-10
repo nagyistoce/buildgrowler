@@ -22,10 +22,9 @@
 
 import sys
 
-# I'mm having some issues with py2app 0.3.6 and python2.3 (I think thats the
-# issue anyway). So if we are building with < 2.4 (ie the Apple supplied Python)
-# use an older style of specifying the setup, by importing py2app and not
-# setuptools.
+# py2app 0.3.6 using the Apple supplied Python 2.3.5 does not produce a working
+# application, see note in doc directory. This code attempts to remedy that
+# situation.
 # FIXME: Some of this might be true ONLY if we are using the apple supplied
 # Python2.3 and doing a semi-standalone build??? and not generally for
 # Python2.3?
@@ -52,10 +51,10 @@ else:
 
 from setuptools import setup
 
-#from distutils.core import setup
+
+
 import distutils.cmd 
 import distutils.command.build
-
 from distutils.util import *
 import distutils.spawn as d_spawn
 import os
