@@ -22,14 +22,43 @@
 
 import sys
 
-from distutils.core import setup
+# I'mm having some issues with py2app 0.3.6 and python2.3 (I think thats the
+# issue anyway). So if we are building with < 2.4 (ie the Apple supplied Python)
+# use an older style of specifying the setup, by importing py2app and not
+# setuptools.
+# FIXME: Some of this might be true ONLY if we are using the apple supplied
+# Python2.3 and doing a semi-standalone build??? and not generally for
+# Python2.3?
+if sys.hexversion < 0x02040000:
+    setup_options=dict(setup_requires=["py2app"])
+    # FIXME: Is this required for >= 2.4 as well?
+    py2app_options=dict(packages='zope')
+    version = sys.version[:3]
+    # This is required to make the app look for _objc.so (and probably other
+    # things) in the right place. From:
+    # http://maba.wordpress.com/2006/08/31/ 
+    # incredible-2d-images-using-nodebox-universal-binary/
+    plist_options=dict(PyResourcePackages=[
+        (s % version) for s in [
+            u'lib/python%s', 
+            u'lib/python%s/lib-dynload',
+            u'lib/python%s/site-packages',
+            u'lib/python%s/site-packages.zip',
+            ]])
+else:
+    setup_options=dict(setup_requires=["py2app"])
+    py2app_options=dict()
+    plist_options=dict()
+
+from setuptools import setup
+
+#from distutils.core import setup
 import distutils.cmd 
 import distutils.command.build
 
 from distutils.util import *
 import distutils.spawn as d_spawn
 import os
-from py2app.util import makedirs
 class build_frameworks(distutils.cmd.Command):
     description = "Builds OS X Frameworks"
     user_options = [
@@ -89,6 +118,7 @@ class build_frameworks(distutils.cmd.Command):
                     py2app.get_appname() + '.app')
             app_framework_path = os.path.join(
                     app_path, 'Contents', 'Frameworks')
+            from py2app.util import makedirs
             makedirs(app_framework_path)
             # FIXME: Move somewhere else, ie into a Frameworks class, like the
             # Extensions class
@@ -123,19 +153,6 @@ class build_frameworks(distutils.cmd.Command):
 
 distutils.command.build.build.sub_commands.append(('build_frameworks', None))
 
-# I'mm having some issues with py2app 0.3.6 and python2.3 (I think thats the
-# issue anyway). So if we are building with < 2.4 (ie the Apple supplied Python)
-# use an older style of specifying the setup, by importing py2app and not
-# setuptools.
-if sys.hexversion < 0x02040000:
-    import py2app
-    setup_options=dict()
-    py2app_options=dict(packages='zope')
-else:
-    from setuptools import setup
-    setup_options=dict(setup_requires=["py2app"])
-    py2app_options=dict()
-
 setup(
     cmdclass={'build_frameworks': build_frameworks},
     app=['src/main.py'],
@@ -153,7 +170,8 @@ setup(
             CFBundleIdentifier='org.transterpreter.BuildGrowler',
             NSHumanReadableCopyright='Copyright 2007 Christian L. Jacobsen',
             #CFBundleVersion='0.1', # build version
-            CFBundleShortVersionString='0.2.0' # release-version-number
+            CFBundleShortVersionString='0.2.0', # release-version-number
+            **plist_options # Options from above
         ),
         **py2app_options # Options from above
     )),
