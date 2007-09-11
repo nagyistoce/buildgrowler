@@ -187,6 +187,11 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
                     BGUtils.fourCharCode2Int('BBoT'),
                     BGUtils.kSecAuthenticationTypeDefault)
             password = self.credPassword.getNewPassword()
+            # If there was an error leave the new password intact, otherwise
+            # clear it
+            if result[1] == None:
+                # No error occured.
+                self.credPassword.clearNewPassword()
         else:
             result = keychain.\
                 findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
