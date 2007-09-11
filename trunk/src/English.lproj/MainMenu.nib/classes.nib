@@ -32,7 +32,8 @@
             CLASS = FirstResponder; 
             LANGUAGE = ObjC; 
             SUPERCLASS = NSObject; 
-        }
+        }, 
+        {CLASS = PasswordController; LANGUAGE = ObjC; SUPERCLASS = NSSecureTextField; }
     ); 
     IBVersion = 1; 
 }

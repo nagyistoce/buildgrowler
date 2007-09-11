@@ -159,20 +159,26 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         # Do normal start button stuff
         self.startButton.setEnabled_(False)
         host = self.hostText.objectValue()
-        # FIXME: Error checking, alow only numbers
+        # The portText field ensures that the user can ONLY enter numbers (in
+        # the valid port range even)
         port = int(self.portText.objectValue())
-        # FIXME: Store in keychain
         # Some Twisted bits do not like it when I pass in the PyObjC unicode
         # type object which comes out of here. Instead turn it into an str for
         # all round glorious happiness
+        # FIXME: Do we support unicode usernames and passwords, well not at the
+        # moment, but should they be supported
         username = str(self.credUserName.objectValue())
-        password = str(self.credPassword.objectValue())
-        # Check if there is a password in the keychain for this item
+        # Check if the user entered a new password, if so store in keychain, i
+        # then use it, else fetch password from keychain and use that
+        password = None
         keychain = self.__getKeychain()
-        if password != '        ':
-            result = \
-            keychain.setInternetPassword_forServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
-                    password,
+        if self.credPassword.hasNewPassword():
+            # FIXME: We only store a username if the connection was went ok,
+            # however the password always gets updated in the keychain
+            # regardless of whether we successfully connected.
+            result = keychain.\
+                setInternetPassword_forServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
+                    self.credPassword.getNewPassword(),
                     host,
                     None,
                     username,
@@ -180,9 +186,10 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
                     port,
                     BGUtils.fourCharCode2Int('BBoT'),
                     BGUtils.kSecAuthenticationTypeDefault)
+            password = self.credPassword.getNewPassword()
         else:
-            result =\
-            keychain.findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
+            result = keychain.\
+                findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
                     host,
                     None,
                     username,
@@ -190,7 +197,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
                     port,
                     BGUtils.fourCharCode2Int('BBoT'),
                     BGUtils.kSecAuthenticationTypeDefault)
-            password = str(result[0])
+            password = result[0]
 
         self.hostText.setEnabled_(False)
         self.portText.setEnabled_(False)
