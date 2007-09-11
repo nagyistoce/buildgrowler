@@ -33,6 +33,7 @@ import BuildGrowlerWindow
 import BuildGrowlerController
 from BuildGrowlerNotifier import *
 from BuildGrowler import *
+from PasswordController import *
 
 
 def setupGrowl():
