@@ -890,6 +890,7 @@ static AIKeychain *lastKnownDefaultKeychain = nil;
 				[pool release];
 				[error autorelease];
 			} //if (err == errSecDuplicateItem)
+            *outError = error;
 		} //if (error) (addInternetPassword:...)
 	} //if (password)
 }
