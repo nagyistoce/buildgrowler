@@ -161,7 +161,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         host = self.hostText.objectValue()
         # The portText field ensures that the user can ONLY enter numbers (in
         # the valid port range even)
-        port = int(self.portText.objectValue())
+        port = int(self.portText.intValue())
         # Some Twisted bits do not like it when I pass in the PyObjC unicode
         # type object which comes out of here. Instead turn it into an str for
         # all round glorious happiness
