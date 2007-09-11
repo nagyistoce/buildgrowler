@@ -256,14 +256,22 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
     # Whenever a new character is typed
     def controlTextDidChange_(self, n):
         if n.object() is self.hostText:
+            hostText = n.object().stringValue()
+            #if self.lastHostText == hostText:
+            #    return
             self.__updatePortFromString(n.object().stringValue())
             self.__updateCredentials(n.object().stringValue())
+            self.lastHostText = hostText
 
     # Fired whenever a new selection is made from the dropdown in the combobox
     def comboBoxSelectionDidChange_(self, n):
         if n.object() is self.hostText:
+            hostText = n.object().stringValue()
+            #if self.lastHostText == hostText:
+            #    return
             self.__updatePortFromIndex(n.object().indexOfSelectedItem())
             self.__updateCredentials(n.object().indexOfSelectedItem())
+            self.lastHostText = hostText
 
     # This is fired when editing ends, mostly when the cursor leaves the
     # combobox. This catches cases where the selected autocompletion text
@@ -272,7 +280,6 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
     # hit the start button w/o first removing focus from the combobox.
     def controlTextDidEndEditing_(self, n):
         if n.object() is self.hostText:
-            self.__updateCredentials(n.object().stringValue())
             # If somebody enters and exits the host editor, and the text did not
             # change, do NOT update the port... the user might be in the process
             # of updating it.
@@ -280,6 +287,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
             if self.lastHostText == hostText:
                 return
             self.__updatePortFromString(hostText)
+            self.__updateCredentials(n.object().stringValue())
             self.lastHostText = hostText
 
 # vim:ts=4:sw=4:et:
