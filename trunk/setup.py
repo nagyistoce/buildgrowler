@@ -21,6 +21,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import sys
+import os
 
 # py2app 0.3.6 using the Apple supplied Python 2.3.5 does not produce a working
 # application, see note in doc directory. This code attempts to remedy that
@@ -152,6 +153,21 @@ class build_frameworks(distutils.cmd.Command):
 
 distutils.command.build.build.sub_commands.append(('build_frameworks', None))
 
+def getSVNLastChangedRev(trunk = '/trunk'):
+    output = os.popen('svnversion -cn . %s' % (trunk))
+    version = output.readline()
+    version = version.split(':')[1]
+    return version
+
+def isAliasBuild():
+    return 'py2app' in sys.argv and ('--alias' in sys.argv or '-A' in sys.argv)
+
+def getBundleVersion():
+    if isAliasBuild():
+        return 'AliasBuild'
+    else:
+        return getSVNLastChangedRev()
+
 setup(
     cmdclass={'build_frameworks': build_frameworks},
     app=['src/main.py'],
@@ -168,7 +184,7 @@ setup(
             CFBundleName='BuildGrowler',
             CFBundleIdentifier='org.transterpreter.BuildGrowler',
             NSHumanReadableCopyright='Copyright 2007 Christian L. Jacobsen',
-            #CFBundleVersion='0.1', # build version
+            CFBundleVersion='r%s' % (getBundleVersion()), # build version
             CFBundleShortVersionString='0.2.0', # release-version-number
             **plist_options # Options from above
         ),
