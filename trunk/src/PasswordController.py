@@ -48,6 +48,9 @@ class PasswordController(NibClassBuilder.AutoBaseClass):
     def getNewPassword(self):
         return self.password
 
+    def clearNewPassword(self):
+        self.password = None
+
     # Whenever we get focus
     def becomeFirstResponder(self):
         self.setStringValue_('')
@@ -61,7 +64,6 @@ class PasswordController(NibClassBuilder.AutoBaseClass):
     # control)
     def controlTextDidEndEditing_(self, n):
         if self.changed:
-            print n.object().stringValue()
             self.password = BGUtils.AIWiredString.stringWithString_(n.object().stringValue())
             self.changed = False
         n.object().setStringValue_('        ')
