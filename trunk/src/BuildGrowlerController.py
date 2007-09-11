@@ -179,7 +179,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
                     None,
                     port,
                     BGUtils.fourCharCode2Int('BBoT'),
-                    BGUtils.fourCharCode2Int('dflt'))
+                    BGUtils.kSecAuthenticationTypeDefault)
         else:
             result =\
             keychain.findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
@@ -189,10 +189,7 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
                     None,
                     port,
                     BGUtils.fourCharCode2Int('BBoT'),
-                    # FIXME: I should define these somewhere, BGUtils
-                    # probably... I suspect there is no automagic way of getting
-                    # them from ObjC
-                    BGUtils.fourCharCode2Int('dflt'))
+                    BGUtils.kSecAuthenticationTypeDefault)
             password = str(result[0])
 
         self.hostText.setEnabled_(False)
