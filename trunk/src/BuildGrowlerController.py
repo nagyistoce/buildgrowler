@@ -170,39 +170,40 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         username = str(self.credUserName.objectValue())
         # Check if the user entered a new password, if so store in keychain, i
         # then use it, else fetch password from keychain and use that
-        password = None
-        keychain = self.__getKeychain()
-        if self.credPassword.hasNewPassword():
-            # FIXME: We only store a username if the connection was went ok,
-            # however the password always gets updated in the keychain
-            # regardless of whether we successfully connected.
-            result = keychain.\
-                setInternetPassword_forServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
-                    self.credPassword.getNewPassword(),
-                    host,
-                    None,
-                    username,
-                    None,
-                    port,
-                    BGUtils.fourCharCode2Int('BBoT'),
-                    BGUtils.kSecAuthenticationTypeDefault)
-            password = self.credPassword.getNewPassword()
-            # If there was an error leave the new password intact, otherwise
-            # clear it
-            if result[1] == None:
-                # No error occured.
-                self.credPassword.clearNewPassword()
-        else:
-            result = keychain.\
-                findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
-                    host,
-                    None,
-                    username,
-                    None,
-                    port,
-                    BGUtils.fourCharCode2Int('BBoT'),
-                    BGUtils.kSecAuthenticationTypeDefault)
-            password = result[0]
+        password = ''
+        if username: # If there is a username
+            keychain = self.__getKeychain()
+            if self.credPassword.hasNewPassword():
+                # FIXME: We only store a username if the connection was went ok,
+                # however the password always gets updated in the keychain
+                # regardless of whether we successfully connected.
+                result = keychain.\
+                    setInternetPassword_forServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
+                        self.credPassword.getNewPassword(),
+                        host,
+                        None,
+                        username,
+                        None,
+                        port,
+                        BGUtils.fourCharCode2Int('BBoT'),
+                        BGUtils.kSecAuthenticationTypeDefault)
+                password = self.credPassword.getNewPassword()
+                # If there was an error leave the new password intact, otherwise
+                # clear it
+                if result[1] == None:
+                    # No error occured.
+                    self.credPassword.clearNewPassword()
+            else:
+                result = keychain.\
+                    findInternetPasswordForServer_securityDomain_account_path_port_protocol_authenticationType_keychainItem_error_(
+                        host,
+                        None,
+                        username,
+                        None,
+                        port,
+                        BGUtils.fourCharCode2Int('BBoT'),
+                        BGUtils.kSecAuthenticationTypeDefault)
+                password = result[0]
 
         self.hostText.setEnabled_(False)
         self.portText.setEnabled_(False)
