@@ -2,27 +2,39 @@
 #labels Phase-Deploy,Featured
 
 
-== Install Growl ==
+=== Install Growl ===
 
-If you do not already have [http://growl.info/ Growl] installed, you must do so. Now! Even if you are never going to use BuildGrowler you must still install [http://growl.info/ Growl]. Growl is used by BuildGrowler to display its notifications (and will thus be quite useless without it). Growl also lets you choose between a host of different notification styles and lets you choose to ignore or make certain notifications sticky.
+If you do not already have [http://growl.info/ Growl] installed, you must do so... now! Even if you are never going to use BuildGrowler you must still install [http://growl.info/ Growl], for the sake of your own sanity and well-being.
 
-== Downloading ==
+BuildGrowler uses Growl  to display all of its notifications (and without Growl, BuildGrowler will be quite useless). Growl also has a number of different notification styles available and lets you choose to ignore or make certain notifications sticky. Hence, most of the customisation of BuildGrowler actually happens through Growl.
 
-BuildGrowler is a Universal application, so there is just one download, which will work on both Intel and PPC Macs. Find the most recent BuildGrowler download from the http://code.google.com/p/buildgrowler/ Project Home page] or alternative peruse the [http://code.google.com/p/buildgrowler/downloads/list Downloads].
+=== Downloading ===
 
-== Installing == 
+BuildGrowler is a Universal application (so there is just one download, which will work on both Intel and PPC Macs). Find the most recent BuildGrowler download from the [http://code.google.com/p/buildgrowler/ Project Home page] or alternative peruse the [http://code.google.com/p/buildgrowler/downloads/list Downloads] section.
 
-BuildGrowler is distributed as a zip file. After downloading BuildGrowler, expand the zip file by double clicking, opening it, or whatever other magic you choose to use. This will cause the BuildGrowler application to be appear, probably in the same location as the zip file. Once BuildGrowler has been decompressed, you can move it to your Applications folder, some other convenient folder, or just leave where it is. Double click BuildGrowler, or preferably, use [http://quicksilver.blacktree.com/ Quicksilver] to launch the application.
+=== Installing === 
+
+BuildGrowler is distributed as a zip file. After downloading BuildGrowler, expand the zip file by double clicking it (alternatively use some other kind of magic of your choosing). Double clicking the file should cause the BuildGrowler application to be decompressed and it should appear in roughly the same location as the zip file. Once BuildGrowler has been decompressed, you can move it to your Applications folder, some other convenient folder, or just leave where it is. Double click BuildGrowler or, preferably, use [http://quicksilver.blacktree.com/ Quicksilver] to launch the application.
 
 
-== What Next ==
+=== What Next ===
 
   * Connect to a BuildBot server (help on using BuildGrowler is not yet available)
   * If you administer of a BuildBot server you'll need to [BuildBotSetup set it up] so that BuildGrowlers can connect to it. 
 
-== Instructions for Windows users ==
+*Instructions for Windows users*
 
-Please note that for these instructions to work using MS Windows, you must first go and purchase an Apple Mac. You can do this from the online Apple store. Your former Windows machine will make a nice Linux box!
+Please note that for these instructions to work using Microsoft Windows, you must first go and purchase an Apple Mac. You can do this from the online [http://store.apple.com/ Apple store]. Once you have purchased a Mac that is to your likening, your former Windows machine will make a nice [http://www.ubuntu.com/ Linux box].
+
+
+
+
+
+
+
+
+
+
 
 
 
