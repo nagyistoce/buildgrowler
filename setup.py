@@ -52,6 +52,33 @@ else:
 
 from setuptools import setup
 
+# Mmm.... I wan't to explicitly import py2app stuff here to monkeypatch it, but
+# this breaks the bootstrapping nature of of this whole setup... oh well..
+import py2app.util
+p2auml = py2app.util.make_loader
+def my_make_loader(fn):
+    loader = p2auml(fn)
+    if fn in ['zope/interface/_zope_interface_coptimizations.so']:
+        loader = loader.splitlines()
+        newloader = []
+        for line in loader:
+            if line.lstrip().startswith('mod = imp.load_dynamic'):
+                (space, dummy) = line.split('mod', 1)
+                newloader.append(space + 'try:')
+                newloader.append(space + '    ' + line.lstrip())
+                newloader.append(space + 'except ImportError, e:')
+                newloader.append(space + '    del sys.modules[__name__]')
+                newloader.append(space + '    raise ImportError, e')
+            elif line.lstrip().startswith('raise ImportError'):
+                (space, dummy) = line.split('raise', 1)
+                newloader.append(space + 'del sys.module[__name__]')
+                newloader.append(line)
+            else:
+                newloader.append(line)
+        return '\r\n'.join(newloader)
+    else:
+        return loader
+py2app.util.make_loader = my_make_loader
 
 
 import distutils.cmd 
