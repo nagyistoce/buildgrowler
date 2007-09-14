@@ -32,7 +32,7 @@ import os
 if sys.hexversion < 0x02040000:
     setup_options=dict(setup_requires=["py2app"])
     # FIXME: Is this required for >= 2.4 as well?
-    py2app_options=dict(packages='zope')
+    py2app_options=dict()
     version = sys.version[:3]
     # This is required to make the app look for _objc.so (and probably other
     # things) in the right place. From:
