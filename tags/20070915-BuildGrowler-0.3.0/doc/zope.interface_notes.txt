@@ -1,0 +1,172 @@
+This thing has caused me untold amounts of greif. Basically there is an
+attempted import of a C module (_zope_interface_coptimisations), which pretty
+much always fails, due to the symbol: Py_CLEAR not being defined (which is used
+in the C code). This was only introcuced in Python 2.4 and is thus not available
+in 2.3.X. The import was neatly hidden in an exception block and I thus never
+got to see it. However, if importing of the C interface fails, it falls back to
+something else (hence the hiding exception block) and this seems to work fine
+when using a py2app alias build, but once the application is bundled, even this
+fallback does not work... perhaps it is not including somethat that it should?
+
+Anyway, a demo of trying to import the dylib:
+-------------8<----------------------8<------------------------8<-------------
+import sys, pkg_resources, imp; imp.load_dynamic("_zope_interface_coptimizations", "/System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/zope.interface-3.4.0-py2.3-macosx-10.4-ppc.egg/zope/interface/_zope_interface_coptimizations.so")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in ?
+ImportError: dlopen(/System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/zope.interface-3.4.0-py2.3-macosx-10.4-ppc.egg/zope/interface/_zope_interface_coptimizations.so, 2): Symbol not found: _Py_CLEAR
+  Referenced from: /System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/zope.interface-3.4.0-py2.3-macosx-10.4-ppc.egg/zope/interface/_zope_interface_coptimizations.so
+  Expected in: dynamic lookup
+-------------8<----------------------8<------------------------8<-------------
+
+When trying to import the bundled zope.interface:
+-------------8<----------------------8<------------------------8<-------------
+import sys
+import zlib
+sys.path = \
+  ["/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/lib/python2.3",
+  "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload",
+  "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/lib/python2.3/site-packages",
+  "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/lib/python2.3/site-packages.zip",
+  "/System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3",
+  "/System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/lib-dynload"]
+from zope.interface import Interface
+Traceback (most recent call last):
+  File "test.py", line 11, in ?
+   from zope.interface import Interface
+  File "zope/interface/__init__.pyc", line 55, in ?
+  File "zope/interface/interface.pyc", line 809, in ?
+  File "zope/interface/declarations.pyc", line 993, in ?
+ImportError: cannot import name ClassProvidesBase
+-------------8<----------------------8<------------------------8<-------------
+
+When running the BuildGrowler app, this is neatly hidden behind another import
+in an exception block:
+-------------8<----------------------8<------------------------8<-------------
+2007-09-14 18:21:26.656 BuildGrowler[15839] BuildGrowler Error
+An unexpected error has occurred during execution of the main script
+
+ImportError: you need zope.interface installed (http://zope.org/Products/ZopeInterface/)
+Traceback (most recent call last):
+  File "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/__boot__.py", line 31, in ?
+    _run('main.py')
+  File "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/__boot__.py", line 28, in _run
+    execfile(path, globals(), globals())
+  File "/Users/clj3/work/osx/buildgrowler/dist/BuildGrowler.app/Contents/Resources/main.py", line 31, in ?
+    import globals
+  File "globals.pyc", line 32, in ?
+  File "twisted/__init__.pyc", line 22, in ?
+ImportError: you need zope.interface installed (http://zope.org/Products/ZopeInterface/)
+2007-09-14 18:21:41.826 BuildGrowler[15853] BuildGrowler Error
+2007-09-14 18:21:41.826 BuildGrowler[15853] BuildGrowler Error
+An unexpected error has occurred during execution of the main script
+
+ImportError: you need zope.interface installed (http://zope.org/Products/ZopeInterface/)
+-------------8<----------------------8<------------------------8<-------------
+
+So the block where the import happens in zope.interface looks like so:
+-------------8<----------------------8<------------------------8<-------------
+# Try to get C base:
+try:
+    import _zope_interface_coptimizations
+except ImportError:
+    pass
+else:
+    from _zope_interface_coptimizations import ClassProvidesBase
+-------------8<----------------------8<------------------------8<-------------
+Which should, import the python module: _zope_interface_coptimizations, which in
+turn will load the _zope_interface_coptimizations.so file. This really should
+fail with an ImportError exception, but it seems that it does not, as control is
+passed onto the else clause where it tries to import ClassProvidesBase as can be
+seen further above. This is all very strange, and works absolutely fine (ie
+presumably an ImportError is thrown) and control never reaches the else when
+running from an alias build (using the package from the global site-packages) or
+when bundling the entire zope package uncompressed in the bundle.
+
+Mmmm.... py2app generates its own loader scripts for modules:
+_zope_interface_coptimizations.py
+-------------8<----------------------8<------------------------8<-------------
+def __load():
+    import imp, os, sys
+    ext = 'zope/interface/_zope_interface_coptimizations.so'
+    for path in sys.path:
+        if not path.endswith('lib-dynload'):
+            continue
+        ext = os.path.join(path, ext)
+        if os.path.exists(ext):
+            #print "py2app extension module", __name__, "->", ext
+            mod = imp.load_dynamic(__name__, ext)
+            #mod.frozen = 1
+            break
+        else:
+            raise ImportError, repr(ext) + " not found"
+    else:
+        raise ImportError, "lib-dynload not found"
+__load()
+del __load
+-------------8<----------------------8<------------------------8<-------------
+is this interfering with stuff? Yep, it is definitely this generated file which
+is used to load the module. In fact the _zope_interface_coptimizations.py file
+from zope.interface is never even considered as far as I can tell. However, I
+can't see how this one does anything which is particularily much different from
+the one in zope.interface...
+
+Right, so the problem definitely is this: The import happens in one place. The
+above script throws an ImporError. However when the import then happens again
+somehwere else, the script is not called, no ImportError is produced and the
+else clause is executed. However as the dylib has never been loaded, the things
+defined in the lib are not available and the import in the else clause of the
+try fail, leaing to an ImportError that gets propagated to the twisted script
+which reports that it was unable to load zope.interface (which is of course not
+*entirely* correct).
+
+Ok, so I do not know why the two loaders work differently, for completeness,
+here is the _zope_interface_coptimizations.py from zope.interface:
+-------------8<----------------------8<------------------------8<-------------
+def __bootstrap__():
+   global __bootstrap__, __loader__, __file__
+   import sys, pkg_resources, imp
+   __file__ = pkg_resources.resource_filename(__name__,'_zope_interface_coptimizations.so')
+   del __bootstrap__, __loader__
+   imp.load_dynamic(__name__,__file__)
+__bootstrap__()
+-------------8<----------------------8<------------------------8<-------------
+I've tried to use a slightly modded version of this loader (the loader does not
+actually work when running from py2app stuff is no longer located in an egg,
+which I think this loaders is made for (pgk_resources specifically)). However
+that did not seem to help either. I do not know why this stuff works when
+running in 'normal' python (ie alias build) but not when running as an app.
+
+Anyway, but actually deleting the module reference out of sys.modules, it is
+possible to make the module reload itself every time it is requested. Here is
+the modified loader from above:
+-------------8<----------------------8<------------------------8<-------------
+def __load():
+    import imp, os, sys
+    ext = 'zope/interface/_zope_interface_coptimizations.so'
+    for path in sys.path:
+        if not path.endswith('lib-dynload'):
+            continue
+        ext = os.path.join(path, ext)
+        if os.path.exists(ext):
+            #print "py2app extension module", __name__, "->", ext
+            try:
+                mod = imp.load_dynamic(__name__, ext)
+            except ImportError, e:
+                del sys.modules[__name__]
+                raise ImportError, e
+            #mod.frozen = 1
+            break
+        else:
+            del sys.modules[__name__]
+            raise ImportError, repr(ext) + " not found"
+    else:
+        del sys.modules[__name__]
+        raise ImportError, "lib-dynload not found"
+__load()
+del __load
+-------------8<----------------------8<------------------------8<-------------
+
+I've haxored my setup.py script to haxor py2app to haxor the function that
+returns the normal loader to haxor it into the above in special cases (ie when
+loading _zope_interface_coptimizations.so), but not when loading other things.
+
