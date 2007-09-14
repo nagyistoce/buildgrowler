@@ -1,0 +1,25 @@
+I'm having problems with TextFields and focus. Specifically now with the
+password field and button presses.
+
+When I enter some stuff in the password field and then press the start button,
+no textDidChange notification is received and the field does not know it lost
+focus, (which it seems to do). Tabbing, pressing enter works fine, its hitting
+the start button with the mouse that sends no indication that I know of to the
+text editor.
+
+Here is an email with a suggestion of overriding controlTextDidEndEditing
+http://lists.apple.com/archives/Cocoa-dev/2006/Jun/msg01450.html
+but that is exactly what I am doing, except it does not seem to fire when the
+button is hit with the mouse. Does the textfield not loose focus???
+
+Also when I then press tab, after having hit the button, first the host field
+is selected, with no change in the password field, press tab again, and the
+port field is selected and all of a sudden the password field updates. (This is
+because it gets updated due to the focus leaving the host editor).
+
+This could have something to do with the field editor
+(http://developer.apple.com/documentation/Cocoa/Conceptual/TextEditing/Tasks/FieldEditor.html)
+though I can't see what at the moment.
+
+I think I have the same problem with the combo box, and probably the other
+items.
