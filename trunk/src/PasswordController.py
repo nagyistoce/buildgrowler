@@ -64,8 +64,17 @@ class PasswordController(NibClassBuilder.AutoBaseClass):
     # control)
     def controlTextDidEndEditing_(self, n):
         if self.changed:
-            self.password = BGUtils.AIWiredString.stringWithString_(n.object().stringValue())
+            self.password = BGUtils.AIWiredString.stringWithString_(self.stringValue())
             self.changed = False
-        n.object().setStringValue_('        ')
+            self.setStringValue_('        ')
+
+    def youLostFocusButYouMightNotKnowIt(self):
+        # I'm having problems where I do not get loss of focus messages or
+        # anything else, like controlTextDidEndEditing messages when I think I
+        # should. Ie user has edited in control, does not leave it, but
+        # immediately presses a button. I'll use this for the really annoying
+        # cases, though I'd like to fix it properly so that I get some kind of
+        # message... cos other text edit fields have the same problem.
+        self.controlTextDidEndEditing_(None)
 
 # vim:ts=4:sw=4:et:

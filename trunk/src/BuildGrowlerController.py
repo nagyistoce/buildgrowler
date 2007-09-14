@@ -168,6 +168,9 @@ class BuildGrowlerController(NibClassBuilder.AutoBaseClass):
         # FIXME: Do we support unicode usernames and passwords, well not at the
         # moment, but should they be supported
         username = str(self.credUserName.objectValue())
+        # Tell the password field that it might now have lost focus (see comment
+        # of this method in PasswordController.py)
+        self.credPassword.youLostFocusButYouMightNotKnowIt()
         # Check if the user entered a new password, if so store in keychain, i
         # then use it, else fetch password from keychain and use that
         password = ''
