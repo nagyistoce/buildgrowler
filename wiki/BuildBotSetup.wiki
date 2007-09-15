@@ -1,9 +1,13 @@
 #summary Setting up your BuildBot server to enable connections from BuildGrowler
 #labels Phase-Deploy
 
-= Setting up your BuildBot Server = 
+== Setting up your BuildBot Server ==
 
-BuildGrowler uses the PBListener status service in BuildBot, which must therefore be configured. The BuildBot documentation contains [http://buildbot.net/repos/release/docs/buildbot.html#PBListener information on setting up a PBListener]. For your convenience the code snippet is replicated here.
+BuildGrowler uses the PBListener status service in BuildBot, which must be enabled on the BuildBot servers that you are going to connect to. If you do not administer a the BuildBot servers yourself, you may have to contact the administrator and  ask them to enable the PBListener status service.
+
+=== Enabling PBListener ===
+
+ The BuildBot documentation contains instructions for [http://buildbot.net/repos/release/docs/buildbot.html#PBListener setting up a PBListener]. For your convenience the relevant code snippet is replicated here.
 
 {{{
      import buildbot.status.client
@@ -11,5 +15,9 @@ BuildGrowler uses the PBListener status service in BuildBot, which must therefor
      c['status'].append(pbl)
 }}}
 
-You should probably add this bit of code around your other status services. You do not need to specify a user and password and if you don't (in the current version of BuildBot as of this writing: 0.7.5) this will use the default username and password of: "statusClient" and "clientpw", respectively. BuildGrowler is currently set up to *always* log in using these credentials. Thus, you currently need to set up your PBListener with these defaults (this will be fixed in the future).
+You should probably add this bit of code around your other status services. You should always specify a port, user, and password, or you may be surprised by the default values (which for user and password is *not* blank, as of BuildBot 0.7.5)
 
+
+ 
+ 
+ 
