@@ -1,6 +1,11 @@
 #summary Version history
 #labels Featured
 
+== Version 0.3.1 ==
+(18/09/2007)
+ * Fixed sticky notifications which were not working
+ * Silenced some debug printing
+
 == Version 0.3.0 ==
 (15/09/2007)
 
@@ -35,6 +40,9 @@
  * Not generally useful (or available)
  
 BuildGrowler was originally made as tool to help the developers at [http://www.transterpreter.org/ transterpreter.org] monitor the buildstatus during development. As this seems like a more generally useful thing, I've fixed up and made the code available here, under the GPL.
+ 
+ 
+ 
  
  
  
