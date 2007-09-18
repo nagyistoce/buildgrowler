@@ -212,7 +212,7 @@ setup(
             CFBundleIdentifier='org.transterpreter.BuildGrowler',
             NSHumanReadableCopyright='Copyright 2007 Christian L. Jacobsen',
             CFBundleVersion='r%s' % (getBundleVersion()), # build version
-            CFBundleShortVersionString='0.3.0', # release-version-number
+            CFBundleShortVersionString='0.3.1', # release-version-number
             **plist_options # Options from above
         ),
         **py2app_options # Options from above
