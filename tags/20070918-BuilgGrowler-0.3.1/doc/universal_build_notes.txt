@@ -1,0 +1,76 @@
+Given that I got things working with py2app 0.3.6 I should now be able to do a
+universal build of BuildGrowler. I've made a script: check_universal.sh, that
+goes through a py2app generated (non-alias) dist directory and checks for
+non-universal bits (and prints their filename and stuff).
+
+This revealed that with my current setup, no pyton extensoins were built as
+universal. This includes:
+----------8<-------------------------8<---------------------8<-----------------
+Printing list of non-universal executables and bundles in 'dist':
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/_growl.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/_growlImage.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/AppKit/_AppKit.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/ExceptionHandling/_ExceptionHandling.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/Foundation/_Foundation.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/objc/_objc.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/PyObjCTools/_machsignals.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/xml/parsers/pyexpat.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/xml/parsers/sgmlop.so: Mach-O bundle ppc
+dist/BuildGrowler.app/Contents/Resources/lib/python2.3/lib-dynload/zope/interface/_zope_interface_coptimizations.so: Mach-O bundle ppc
+----------8<-------------------------8<---------------------8<-----------------
+
+Which basically boils down to the following packages:
+* Grown python framework
+* PyObjC
+* xml
+* zope.interface
+
+The doc directory of the BuildGrowler sources (which is presumably where you are
+reading this from) contains a universal-setup.py which makes building universal
+binaries from the Apple supplied Python2.3 easy.
+
+Building a Universal PyObjC (1.4):
+* Download the source package from:
+  http://pyobjc.sourceforge.net/software/
+* Change AUTO_UNIVERSAL from 0 to 1 in PyObjC's setup.py script. Its on line 12 
+  in my setup.py. 
+  (Alternatively, try universal-setup.py, though I have not tried this 
+  with PyObjC)
+* Remove any build directories that you may have had hanging around.
+* Then run python2.3 setup.py bdist_mpkg --open
+* Additionally, if you are using Safari 3, you have to disable the WebKit bits:
+  comment out: 'WebKitPackages' in the 'packages' list
+  comment out: 'WebKitExtensions' in the 'ext_modules' list
+  Alternatively fix the compile errors and submit a patch :)
+* This fixes: _AppKit.so, _ExceptionHanding.so, _Foundation.so, _objc.so, and
+  _macsignals.so
+  
+Build a Universal Growl Python binding:
+* Download the Growl SDK:
+  http://growl.info/downloads_developers.php
+* Open the DMG, find the python directory, copy it somewhere writable  
+* Copy universal-setup.py to the python directory (there should be a setup.py
+  in there, plus a couple of .py files, a .c, and a .m file)
+* Remove any stale build directories you may have
+* python2.3 universal-setup.py install
+* That fixes: _growl.so, _growlImage.so
+
+Build a Universal PyXML package:
+* Download the PyXML sources from here:
+  http://sourceforge.net/project/showfiles.php?group_id=6473
+* Decompress somewhere convenient
+* Copy universal-setup.py to the directory containing setup.py
+* Run python2.3 universal-setup.py install
+* That fixes: pyexpat.so, sgmlop.so
+
+Build a Universal zope.interface:
+* Download zope.interface from here:
+  http://www.zope.org/Products/ZopeInterface
+  (Though that site does not actually have the one which is installed by
+  easy_install, which I found here:
+  http://download.zope.org/distribution/zope.interface-3.4.0.tar.gz)
+* Decompress it somewhere inconvenient
+* Copy universal-setup.py to the directory containing setup.py
+* Run python2.3 universal-setup.py install
+* That fixes: _zope_interface_coptimizations.so
+  

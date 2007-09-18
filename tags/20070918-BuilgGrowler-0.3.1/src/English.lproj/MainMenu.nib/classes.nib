@@ -1,0 +1,39 @@
+{
+    IBClasses = (
+        {CLASS = BuildGrowler; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {quit = id; start = id; stop = id; }; 
+            CLASS = BuildGrowlerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                buildGrowler = BuildGrowler; 
+                credPassword = NSSecureTextField; 
+                credUserName = NSTextField; 
+                hostText = NSComboBox; 
+                "menuitem_help" = NSMenuItem; 
+                "menuitem_preferences" = NSMenuItem; 
+                portText = NSTextField; 
+                quitButton = NSButton; 
+                startButton = NSButton; 
+                statusText = NSTextField; 
+                stopButton = NSButton; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {showHideCredentials = id; }; 
+            CLASS = BuildGrowlerWindow; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {credentialsView = NSView; topBox = NSBox; }; 
+            SUPERCLASS = NSWindow; 
+        }, 
+        {
+            ACTIONS = {"" = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = PasswordController; LANGUAGE = ObjC; SUPERCLASS = NSSecureTextField; }
+    ); 
+    IBVersion = 1; 
+}

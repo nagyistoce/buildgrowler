@@ -1,0 +1,44 @@
+I was going to add a framework to this app, though in the end I decided I didn't
+need it. Anyway, I found some quirks that I thought I'd just document, in case I
+am going to do this kinda thing in the future.
+
+NOTE: I never tried to actually build an app using the framework
+
+I don't know of a way to get distutils to build frameworks. I suspect that it
+does not out of the box, so I built it by hand. I'm sure it would not be hard to
+add a framework build extension to distutils. All it has to do really is call
+'xcodebuild'. 
+
+Anyway, to get the framework included in my distribution I added to py2app
+settings in setup.py:
+  frameworks='src/objc/AFramework/build/Release/AFramework.framework',
+
+I added some python to enable me to import the framework: (AFramework.py)
+  import objc
+  objc.loadBundle("AFramework", globals(),
+       bundle_path=objc.pathForFramework(u'@executable_path@/../../Frameworks/AFramework.framework'))
+  del objc
+ 
+I then imported AFramework in my main file:
+  import AFramework
+
+Then I generated an alias build:
+  python2.3 setup.py py2app -A
+
+when I ran the app I got strange error messages about the framework not being
+found. I tried everything, absolute paths etc etc.
+It turns out that the generated symbolic link for the framework (in alias mode)
+was wrong.
+
+It generated an alias to:
+  /../buildgrowler/src/objc/AFramework/build/Release/AFramework.framework/AFramework.framework
+which should in fact have been an alias to:  
+  /../buildgrowler/src/objc/AFramework/build/Release/AFramework.framework
+
+This could be a quirk with alias builds only, never tried a real build. It could
+also be a specific problem with the old (but working) version of py2app that I
+am using. I'm using it cos I can't get anything else to work :(
+
+Real builds are ok, however the Democrazy player project reports in a comment in
+their setup.py file that they have problems with alias builds and frameworks
+too. That is a real pain...

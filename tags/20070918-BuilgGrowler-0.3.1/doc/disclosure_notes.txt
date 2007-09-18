@@ -1,0 +1,5 @@
+A guide on doing drawers and disclosure views:
+http://www.mactech.com/articles/mactech/Vol.16/16.09/DrawersandDisclosure/index.html
+
+Sizing a windows (ie animated resize for discolsure):
+http://developer.apple.com/documentation/Cocoa/Conceptual/WinPanel/Tasks/SizingPlacingWindows.html
