@@ -211,7 +211,7 @@ setup(
             CFBundleName='BuildGrowler',
             CFBundleIdentifier='org.transterpreter.BuildGrowler',
             NSHumanReadableCopyright='Copyright 2007 Christian L. Jacobsen',
-            CFBundleVersion='r%s' % (getBundleVersion()), # build version
+            CFBundleVersion='%s' % (getBundleVersion()), # build version
             CFBundleShortVersionString='0.3.1', # release-version-number
             **plist_options # Options from above
         ),
