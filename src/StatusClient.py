@@ -57,13 +57,13 @@ class StatusClient(pb.Referenceable):
         pass
 
     def remote_buildStarted(self, buildername, build):
-        print "buildStarted", buildername, build
+        #print "buildStarted", buildername, build
         globals.growl.notify(globals.growl.notifications[globals.growl.NOTIFICATION_BUILD_START],
             "BuildBot: " + buildername,
             "Started build")
 
     def remote_buildFinished(self, buildername, build, results):
-        print "buildFinished", buildername, build, results
+        #print "buildFinished", buildername, build, results
         if results == 0:
             globals.growl.notify(globals.growl.notifications[globals.growl.NOTIFICATION_BUILD_END],
                 "BuildBot: " + buildername,
