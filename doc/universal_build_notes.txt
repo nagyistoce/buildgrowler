@@ -38,10 +38,27 @@ Building a Universal PyObjC (1.4):
   with PyObjC)
 * Remove any build directories that you may have had hanging around.
 * Then run python2.3 setup.py bdist_mpkg --open
-* Additionally, if you are using Safari 3, you have to disable the WebKit bits:
-  comment out: 'WebKitPackages' in the 'packages' list
-  comment out: 'WebKitExtensions' in the 'ext_modules' list
-  Alternatively fix the compile errors and submit a patch :)
+* Additionally, if you are using Safari 3, on Tiger, you'll have to fix your
+  development headers, solution from:
+  http://article.gmane.org/gmane.comp.python.pyobjc.devel/4450
+  >>> I had the same problem. You probably installed the Safari 3 beta as 
+  >>> I did, which changed the system WebKit, but not the SDK one. The 
+  >>> problem is that one of the checks reads the contents of the 
+  >>> framework in /System/Library/Frameworks, but the actual compilation 
+  >>> uses the one in 
+  >>> /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks
+  >>>
+  >>> The workaround that I used was to go into
+  >>> /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/WebKit.framework/Versions 
+  >>>
+  >>> and change the Current symlink to point to 
+  >>> /System/Library/Frameworks/WebKit.framework/Versions/Current
+  >>>
+  >>> After that, it compiled fine. I've not used any of the WebKit 
+  >>> functionality to see if it works, but at least everything else seems 
+  >>> to work...
+  >>>
+  >>> -Black
 * This fixes: _AppKit.so, _ExceptionHanding.so, _Foundation.so, _objc.so, and
   _macsignals.so
   
